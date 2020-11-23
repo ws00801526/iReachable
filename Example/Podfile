@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'iReachable_Example' do
+  pod 'iReachable', :path => '../'
+
+  target 'iReachable_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
