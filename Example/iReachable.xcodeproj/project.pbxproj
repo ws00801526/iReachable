@@ -41,11 +41,11 @@
 		607FACE51AFB9204008FA782 /* iReachable_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iReachable_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
-		7D9D5319F87D89008380BB4C /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		7D9D5319F87D89008380BB4C /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		87D4DE0D299796AE0ACBA55D /* Pods-iReachable_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iReachable_Example.release.xcconfig"; path = "Target Support Files/Pods-iReachable_Example/Pods-iReachable_Example.release.xcconfig"; sourceTree = "<group>"; };
 		96F316CB602AA40AFA5FBA35 /* Pods-iReachable_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iReachable_Tests.debug.xcconfig"; path = "Target Support Files/Pods-iReachable_Tests/Pods-iReachable_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		C4A041A7CFE3241B2B89BB05 /* iReachable.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = iReachable.podspec; path = ../iReachable.podspec; sourceTree = "<group>"; };
-		FD7C828E87D445AD6F696606 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		C4A041A7CFE3241B2B89BB05 /* iReachable.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = iReachable.podspec; path = ../iReachable.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		FD7C828E87D445AD6F696606 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		FFA94C4C417B249733318CF0 /* Pods_iReachable_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iReachable_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -147,7 +147,6 @@
 				96F316CB602AA40AFA5FBA35 /* Pods-iReachable_Tests.debug.xcconfig */,
 				41AE9CB3C2AB9865262B451C /* Pods-iReachable_Tests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -213,10 +212,12 @@
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = CY4833TA98;
 						LastSwiftMigration = 0900;
 					};
 					607FACE41AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = CY4833TA98;
 						LastSwiftMigration = 0900;
 						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
@@ -227,6 +228,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -478,10 +480,12 @@
 			baseConfigurationReference = 422B4FAAB9701377C4FA4BCE /* Pods-iReachable_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = CY4833TA98;
 				INFOPLIST_FILE = iReachable/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.iReachable-Example.xxxxxxx";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
@@ -493,10 +497,12 @@
 			baseConfigurationReference = 87D4DE0D299796AE0ACBA55D /* Pods-iReachable_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = CY4833TA98;
 				INFOPLIST_FILE = iReachable/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.iReachable-Example.xxxxxxx";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
@@ -507,6 +513,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 96F316CB602AA40AFA5FBA35 /* Pods-iReachable_Tests.debug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = CY4833TA98;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -529,6 +536,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 41AE9CB3C2AB9865262B451C /* Pods-iReachable_Tests.release.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = CY4833TA98;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 					"$(inherited)",
