@@ -35,10 +35,7 @@ public class IReachable {
     private var reachability: SCNetworkReachability?
         
     deinit {
-        stopNotifier()
-        
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationWillResignActive, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidBecomeActive, object: nil)
+        stopNotifier()        
     }
 }
 
@@ -310,6 +307,7 @@ extension IReachable {
             notify((isWLANLinked || isCellularLinked) ? .restricted : .offline)
         case .restrictedStateUnknown:
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500), execute: notifyIfNeeded)
+        @unknown default: break
         }
     }
 }
@@ -329,7 +327,7 @@ extension IReachable {
     }
     
     func confirmAction(_ action: UIAlertAction) {
-        guard let url = URL(string: UIApplicationOpenSettingsURLString) else { return }
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
         guard UIApplication.shared.canOpenURL(url) else { return }
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }

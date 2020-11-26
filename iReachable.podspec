@@ -14,6 +14,7 @@ Pod::Spec.new do |s|
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'ws00801526' => '3057600441@qq.com' }
   s.source           = { :git => 'https://github.com/ws00801526/iReachable.git', :tag => s.version.to_s }
+  s.swift_version    = '5.0'
   s.ios.deployment_target = '10.0'
   s.source_files = 'iReachable/Classes/**/*'
   s.frameworks = 'Foundation', 'SystemConfiguration', 'CoreTelephony'
