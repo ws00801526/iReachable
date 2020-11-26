@@ -71,16 +71,17 @@ extension IReachable : CustomStringConvertible {
         case i2G    = "2G"
         case i3G    = "3G"
         case i4G    = "4G"
-        @available(iOS 14.0, *) case i5G = "5G"
+        @available(iOS 14.1, *) case i5G = "5G"
         
         static let i2GValues = [CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyCDMA1x]
         static let i3GValues = [CTRadioAccessTechnologyHSDPA, CTRadioAccessTechnologyWCDMA, CTRadioAccessTechnologyHSUPA,
                                 CTRadioAccessTechnologyCDMAEVDORev0, CTRadioAccessTechnologyCDMAEVDORevA, CTRadioAccessTechnologyCDMAEVDORevB,
                                 CTRadioAccessTechnologyeHRPD]
         static let i4GValues = [CTRadioAccessTechnologyLTE]
-        
-        @available(iOS 14.0, *)
-        static let i5GValues = [CTRadioAccessTechnologyNR, CTRadioAccessTechnologyNRNSA]
+                
+        @available(iOS 14.1, *)
+        static let i5GValues = [CTRadioAccessTechnologyNRNSA, CTRadioAccessTechnologyNR]
+        static let i5GValuesPre = ["CTRadioAccessTechnologyNRNSA", "CTRadioAccessTechnologyNR"]
     }
     
     public class func start(_ action: Action? = nil) throws {
@@ -92,6 +93,10 @@ extension IReachable : CustomStringConvertible {
         shared.stopNotifier()
     }
     
+    public class func setAutoAlert(enabled: Bool) {
+        shared.isAutoAlertable = enabled
+    }
+    
     public var description: String { return connection.description }
 }
 
@@ -101,7 +106,9 @@ fileprivate extension IReachable {
         
         func transWWAN(of radio: String) -> Cellular {
             
-            if #available(iOS 14.0, *), Cellular.i5GValues.contains(radio) { return .i5G }
+            if #available(iOS 14.1, *), Cellular.i5GValues.contains(radio) { return .i5G }
+            else if Cellular.i5GValuesPre.contains(radio) { return .i5G }
+            
             switch radio {
             case let item where Cellular.i2GValues.contains(item): return .i2G
             case let item where Cellular.i3GValues.contains(item): return .i3G
@@ -341,6 +348,14 @@ extension IReachable.Connection : Equatable {
         case (.restricted, .restricted): return true
         default: return false
         }
+    }
+}
+
+extension IReachable.Cellular {
+    public var isWWAN: Bool {
+        if case .iWiFi = self { return false }
+        if case .unknown = self { return false }
+        return true
     }
 }
 
