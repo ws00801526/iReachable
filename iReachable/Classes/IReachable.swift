@@ -71,7 +71,7 @@ extension IReachable : CustomStringConvertible {
         case i2G    = "2G"
         case i3G    = "3G"
         case i4G    = "4G"
-        @available(iOS 14.1, *) case i5G = "5G"
+        case i5G    = "5G"
         
         static let i2GValues = [CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyCDMA1x]
         static let i3GValues = [CTRadioAccessTechnologyHSDPA, CTRadioAccessTechnologyWCDMA, CTRadioAccessTechnologyHSUPA,
