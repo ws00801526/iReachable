@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'iReachable'
-  s.version          = '0.1.1'
+  s.version          = '0.1.2'
   s.summary          = 'iReachable is the tools check the (WWAN\WiFi) is available.'
   s.homepage         = 'https://github.com/ws00801526/iReachable'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
