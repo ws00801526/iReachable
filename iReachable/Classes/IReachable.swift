@@ -1,5 +1,5 @@
 //
-//  IReachable.swift
+//  iReachable.swift
 //  iReachable
 //
 //  Created by XMFraker on 2020/11/23.
@@ -15,14 +15,19 @@ public enum IReachableError: Error {
     case unableToScheduleSCNetwork(Int32)
 }
 
-public class IReachable {
+public class iReachable {
 
-    public typealias Action = (IReachable) -> Void
+    public typealias Action = (iReachable) -> Void
     
-    public static let shared = IReachable()
+    public static let shared = iReachable()
     public var notifyAction: Action? = nil
     public private(set) var isAutoAlertable: Bool = true
     public private(set) var connection: Connection = .offline
+    public var isMonitoring: Bool {
+        guard let _ = cellularData?.cellularDataRestrictionDidUpdateNotifier else { return false }
+        guard let _ = reachability else { return false }
+        return true
+    }
     
     private lazy var alert: UIAlertController = {
         let alert = UIAlertController(title: "网络连接失败", message: nil, preferredStyle: .alert)
@@ -40,10 +45,10 @@ public class IReachable {
 }
 
 public extension Notification.Name {
-    static let IReachableStateDidChanged: Notification.Name = .init("IReachable.State.DidChanged")
+    static let IReachableStateDidChanged: Notification.Name = .init("iReachable.State.DidChanged")
 }
 
-extension IReachable.Connection : CustomStringConvertible {
+extension iReachable.Connection : CustomStringConvertible {
     
     public var description: String {
         switch self {
@@ -54,7 +59,7 @@ extension IReachable.Connection : CustomStringConvertible {
     }
 }
 
-extension IReachable : CustomStringConvertible {
+extension iReachable : CustomStringConvertible {
     
     public enum Connection {
         /// Network is available
@@ -100,7 +105,7 @@ extension IReachable : CustomStringConvertible {
     public var description: String { return connection.description }
 }
 
-fileprivate extension IReachable {
+fileprivate extension iReachable {
     
     var currentCellular: Cellular {
         
@@ -175,14 +180,14 @@ fileprivate extension IReachable {
     
     /// Check is this app first launch
     var isFirstRun: Bool {
-        let hasFirshRunFlag = UserDefaults.standard.bool(forKey: "IReachable.first.run.flag")
-        if !hasFirshRunFlag { UserDefaults.standard.set(true, forKey: "IReachable.first.run.flag"); UserDefaults.standard.synchronize() }
+        let hasFirshRunFlag = UserDefaults.standard.bool(forKey: "iReachable.first.run.flag")
+        if !hasFirshRunFlag { UserDefaults.standard.set(true, forKey: "iReachable.first.run.flag"); UserDefaults.standard.synchronize() }
         return !hasFirshRunFlag
     }
     
 }
 
-extension IReachable {
+extension iReachable {
     
     func setup() throws -> Self {
              
@@ -211,7 +216,7 @@ extension IReachable {
 
 // MARK: - Notifier
 
-extension IReachable {
+extension iReachable {
     
     func startNotifier() throws {
         try startReachabilityNotifier()
@@ -278,7 +283,7 @@ extension IReachable {
 
 // MARK: -
 
-extension IReachable {
+extension iReachable {
         
     func notifyIfNeeded() {
         
@@ -320,12 +325,24 @@ extension IReachable {
 }
 
 // MARK: - Alert
-extension IReachable {
+extension iReachable {
+    
+    /// Get the controller to present the alert controller.
+    var visibleController: UIViewController? {
+        guard let root = UIApplication.shared.keyWindow?.rootViewController else { return nil }
+        guard let _ = root.presentedViewController else { return root }
+        var presented: UIViewController? = root.presentedViewController
+        while presented != nil {
+            if let otherPresented = presented?.presentedViewController { presented = otherPresented }
+            else { break }
+        }
+        return presented
+    }
     
     func showAlert() -> Void {
         guard alert.presentingViewController == nil, !alert.isBeingPresented else { return }
         alert.message = connection == .restricted ? "检测到网络权限可能未开启，您可以在“设置”中检查蜂窝移动网络" : "检测到网络可能未开启，您可以在“设置”中查看网络是否连接"
-        UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
+        visibleController?.present(alert, animated: true, completion: nil)
     }
     
     func dismissAlert(_ action: UIAlertAction) -> Void {
@@ -340,7 +357,7 @@ extension IReachable {
     }
 }
 
-extension IReachable.Connection : Equatable {
+extension iReachable.Connection : Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
         case (.online(let lmode), .online(let rmode)): return lmode == rmode
@@ -351,7 +368,7 @@ extension IReachable.Connection : Equatable {
     }
 }
 
-extension IReachable.Cellular {
+extension iReachable.Cellular {
     public var isWWAN: Bool {
         if case .iWiFi = self { return false }
         if case .unknown = self { return false }
@@ -360,8 +377,8 @@ extension IReachable.Cellular {
 }
 
 private class IReachableWeakify {
-    weak var associateObj: IReachable?
-    init(weakObj: IReachable) {
+    weak var associateObj: iReachable?
+    init(weakObj: iReachable) {
         self.associateObj = weakObj
     }
 }

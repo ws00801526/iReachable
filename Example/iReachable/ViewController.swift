@@ -19,11 +19,11 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        try? IReachable.start { reachable in
+        try? iReachable.start { reachable in
             debugPrint("this is new state \(reachable.connection)")
         }
         
-        debugPrint("this is initial state \(IReachable.shared.connection)")
+        debugPrint("this is initial state \(iReachable.shared.connection)")
         
         var zeroAddress = sockaddr()
         zeroAddress.sa_len = UInt8(MemoryLayout<sockaddr>.size)
