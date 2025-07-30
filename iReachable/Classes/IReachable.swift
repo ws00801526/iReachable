@@ -5,24 +5,36 @@
 //  Created by XMFraker on 2020/11/23.
 //
 
+import Network
 import Foundation
 import CoreTelephony
 import SystemConfiguration
 
-public enum IReachableError: Error {
+/// Error
+public enum ReachableError: Error {
+    /// Indicates that create with provided address.
     case failedToCreateWithAddress(sockaddr, Int32)
+    /// Indicates that create reachability failed while setting callback.
     case unableToSetCallback(Int32)
+    /// Indicates that create reachability failed while scheduling.
     case unableToScheduleSCNetwork(Int32)
 }
 
-public class iReachable {
-
+public final class iReachable {
+    
     public typealias Action = (iReachable) -> Void
     
+    /// Singleton iReachable instance.
     public static let shared = iReachable()
+    /// Notify action handler. Called after connection did changed.
+    ///
+    /// Only call on main thread.
     public var notifyAction: Action? = nil
+    /// True means show alertView after connection did changed.
     public private(set) var isAutoAlertable: Bool = true
+    /// Current connection state.
     public private(set) var connection: Connection = .offline
+    /// Ture means the reachable is working.
     public var isMonitoring: Bool {
         guard let _ = cellularData?.cellularDataRestrictionDidUpdateNotifier else { return false }
         guard let _ = reachability else { return false }
@@ -70,13 +82,21 @@ extension iReachable : CustomStringConvertible {
         case offline
     }
     
+    
+    /// The network connect way.
     public enum Cellular: String {
-        case unknown
+        /// Connecting by WiFi
         case iWiFi  = "WiFi"
+        /// Connecting by 2G
         case i2G    = "2G"
+        /// Connecting by 3G
         case i3G    = "3G"
+        /// Connecting by 4G
         case i4G    = "4G"
+        /// Connecting by 5G
         case i5G    = "5G"
+        /// Connecting by unknown, for future.
+        case unknown
         
         static let i2GValues = [CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyCDMA1x]
         static let i3GValues = [CTRadioAccessTechnologyHSDPA, CTRadioAccessTechnologyWCDMA, CTRadioAccessTechnologyHSUPA,
@@ -89,19 +109,23 @@ extension iReachable : CustomStringConvertible {
         static let i5GValuesPre = ["CTRadioAccessTechnologyNRNSA", "CTRadioAccessTechnologyNR"]
     }
     
+    /// Start monitor connection with action handler.
     public class func start(_ action: Action? = nil) throws {
         shared.notifyAction = action
         try shared.setup().startNotifier()
     }
     
+    /// Stop monitor.
     public class func stop() {
         shared.stopNotifier()
     }
     
+    /// Set should auto show alertView.
     public class func setAutoAlert(enabled: Bool) {
         shared.isAutoAlertable = enabled
     }
     
+    /// Current connection description.
     public var description: String { return connection.description }
 }
 
@@ -196,7 +220,7 @@ extension iReachable {
         zeroAddress.sa_len = UInt8(MemoryLayout<sockaddr>.size)
         zeroAddress.sa_family = sa_family_t(AF_INET)
         reachability = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, &zeroAddress);
-        guard let _ = reachability else { throw IReachableError.failedToCreateWithAddress(zeroAddress, SCError()) }
+        guard let _ = reachability else { throw ReachableError.failedToCreateWithAddress(zeroAddress, SCError()) }
 
         // 2. Create CellularData to check restrictedState of Cellular
         cellularData = .init()
@@ -247,28 +271,33 @@ extension iReachable {
         let wReachable: IReachableWeakify = .init(weakObj: self)
         let opaqueWeakReachable = Unmanaged<IReachableWeakify>.passUnretained(wReachable).toOpaque()
         
-        var context = SCNetworkReachabilityContext(version: 0, info: UnsafeMutableRawPointer(opaqueWeakReachable)) {
-            let unmanagedWeakifiedReachability = Unmanaged<IReachableWeakify>.fromOpaque($0)
-            _ = unmanagedWeakifiedReachability.retain()
-            return UnsafeRawPointer(unmanagedWeakifiedReachability.toOpaque())
-        } release: {
-            let unmanagedWeakifiedReachability = Unmanaged<IReachableWeakify>.fromOpaque($0)
-            unmanagedWeakifiedReachability.release()
-        } copyDescription: {
-            let unmanagedWeakifiedReachability = Unmanaged<IReachableWeakify>.fromOpaque($0)
-            let weakifiedReachability = unmanagedWeakifiedReachability.takeUnretainedValue()
-            let description = weakifiedReachability.associateObj?.description ?? "nil"
-            return Unmanaged.passRetained(description as CFString)
-        }
-                
+        var context = SCNetworkReachabilityContext(
+            version: 0,
+            info: UnsafeMutableRawPointer(opaqueWeakReachable),
+            retain: {
+                let unmanagedWeakifiedReachability = Unmanaged<IReachableWeakify>.fromOpaque($0)
+                _ = unmanagedWeakifiedReachability.retain()
+                return UnsafeRawPointer(unmanagedWeakifiedReachability.toOpaque())
+            },
+            release: {
+                let unmanagedWeakifiedReachability = Unmanaged<IReachableWeakify>.fromOpaque($0)
+                unmanagedWeakifiedReachability.release()
+            },
+            copyDescription: {
+                let unmanagedWeakifiedReachability = Unmanaged<IReachableWeakify>.fromOpaque($0)
+                let weakifiedReachability = unmanagedWeakifiedReachability.takeUnretainedValue()
+                let description = weakifiedReachability.associateObj?.description ?? "nil"
+                return Unmanaged.passRetained(description as CFString)
+            })
+        
         if !SCNetworkReachabilitySetCallback(reachability, callBack, &context) {
             stopNotifier()
-            throw IReachableError.unableToSetCallback(SCError())
+            throw ReachableError.unableToSetCallback(SCError())
         }
-
+        
         if !SCNetworkReachabilityScheduleWithRunLoop(reachability, CFRunLoopGetCurrent(), CFRunLoopMode.defaultMode.rawValue) {
             stopNotifier()
-            throw IReachableError.unableToScheduleSCNetwork(SCError())
+            throw ReachableError.unableToScheduleSCNetwork(SCError())
         }
     }
     
@@ -297,8 +326,10 @@ extension iReachable {
                 else { showAlert() }
             }
             
-            if let action = notifyAction { action(self) }
-            NotificationCenter.default.post(name: .IReachableStateDidChanged, object: self)
+            DispatchQueue.main.async {
+                if let action = self.notifyAction { action(self) }
+                NotificationCenter.default.post(name: .IReachableStateDidChanged, object: self)
+            }
         }
 
         // 1. check is network available,  if network is available the state should be reached
